@@ -1,0 +1,525 @@
+{
+ "title": "Wyrd Facts",
+ "categories": [
+  {
+   "key": "aberglaube",
+   "label": "Aberglaube & Folklore",
+   "count": 4
+  },
+  {
+   "key": "verschwoerung",
+   "label": "Verschwörung & Weltuntergang",
+   "count": 6
+  },
+  {
+   "key": "ufo",
+   "label": "Ufos & Kryptiden",
+   "count": 3
+  },
+  {
+   "key": "okkult",
+   "label": "Sekten & Okkultes",
+   "count": 9
+  },
+  {
+   "key": "seuchen",
+   "label": "Seuchen & Medizin",
+   "count": 6
+  },
+  {
+   "key": "pseudo",
+   "label": "Pseudowissenschaft",
+   "count": 6
+  },
+  {
+   "key": "kurios",
+   "label": "Kurioses & Irrtümer",
+   "count": 5
+  }
+ ],
+ "questions": [
+  {
+   "id": "q001",
+   "cat": "verschwoerung",
+   "q": "Laut der gängigen Verschwörungstheorie hat welcher Regiseur die Mondlandung inszeniert ?",
+   "type": "mc",
+   "options": [
+    "Steven Spielberg",
+    "George Lucas",
+    "Stanley Kubrick",
+    "Ron Howard"
+   ],
+   "correct": 2
+  },
+  {
+   "id": "q002",
+   "cat": "aberglaube",
+   "q": "Im italienischen Aberglauben ist welche Zahl eine Unglückszahl ?",
+   "type": "mc",
+   "options": [
+    "13",
+    "11",
+    "21",
+    "17"
+   ],
+   "correct": 3
+  },
+  {
+   "id": "q003",
+   "cat": "aberglaube",
+   "q": "Im japanischen Aberglauben klingen die Worte für die Zahl Vier und das Wort für Tod sehr ähnlich ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q004",
+   "cat": "kurios",
+   "q": "Der Erfinder der Comicfigur Wonder Woman ist auch der Erfinder des Lügendetektors ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q005",
+   "cat": "aberglaube",
+   "q": "Im italienischen wird der Spruch – Tocca Ferro – was soviel bedeutet wie – berühr Eisen – verwendet um Unglück abzuwenden wenn über welches Thema gesprochen wird?",
+   "type": "mc",
+   "options": [
+    "den Tod",
+    "über Hochzeiten",
+    "über Taufen",
+    "über Schwangerschaften"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q006",
+   "cat": "ufo",
+   "q": "Das Flugverhalten der ersten gesichteten Ufos wurde wie folgt beschrieben ...",
+   "type": "mc",
+   "options": [
+    "wie Suppentassen die über Wasser hüpfen",
+    "wie sich drehende Kreisel",
+    "wie hüpfende Irrlichter",
+    "wie wackelnde Stehaufmännchen"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q007",
+   "cat": "aberglaube",
+   "q": "Was verwendet man laut Folklore um sich gegen bösartige Feen zu wehren ?",
+   "type": "mc",
+   "options": [
+    "Eisen",
+    "Kupfer",
+    "Salz",
+    "Schwefel"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q008",
+   "cat": "ufo",
+   "q": "Die Massenpanik die auf die Austrahlung von Krieg der Welten von Orson Wells ausbrach gilt wenn man Originalquellen im Nachhinein betrachtet als in der Popkultur übertrieben beschrieben ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q009",
+   "cat": "okkult",
+   "q": "Maria wird laut Originalquellen als Alma beschrieben, was wofür steht ...",
+   "type": "mc",
+   "options": [
+    "Jungfrau",
+    "Junge Frau",
+    "Mutter",
+    "Witwe"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q010",
+   "cat": "okkult",
+   "q": "Auf welcher Insel hatte Johannes seine Offenbarung, also angeblich ...",
+   "type": "mc",
+   "options": [
+    "Kos",
+    "Capri",
+    "Patmos",
+    "Elba"
+   ],
+   "correct": 2
+  },
+  {
+   "id": "q011",
+   "cat": "ufo",
+   "q": "Das kryptologische Wesen des Big Foot wurde wenn man alle Sichtungen auswertet in jedem Bundesstaat der USA gesichtet ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q012",
+   "cat": "pseudo",
+   "q": "Hans Hörbiger aus der berühmen Familie der Hörbiger stammend hatte welche pseudowissenschaftliche Idee ?",
+   "type": "mc",
+   "options": [
+    "die einer alternativen Entstehungsgeschichte der Erde",
+    "die Idee Ufo-artige Flugmaschinen zu bauen",
+    "die Idee ein Perpetuum Mobile zu bauen",
+    "die einer alternativen Wissenschaft gleichgesetzt mit der Evolutionstheorie"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q013",
+   "cat": "pseudo",
+   "q": "Die Mutter von Sylvester Stallone hat eine Methode erfunden um die Zukunft anhand des menschlichen Pos abzulesen ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q014",
+   "cat": "verschwoerung",
+   "q": "Laut der wissenschaftlichen Interpretation des Maya Kalenders sollte in 2012 die Welt untergehen ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q015",
+   "cat": "verschwoerung",
+   "q": "Basierend auf welcher Verschwörungsidee hat Wolfgang Emmerich 2009 einen Film inszeniert ?",
+   "type": "mc",
+   "options": [
+    "den Interpretationen Nostradamus",
+    "Pseudo-Interpretation des Maya Kalenders und des Weltuntergangs 2012",
+    "Interpretationen des Voynich Manuskripts",
+    "den Prophezeiungen der Seherin Baba Wanga"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q016",
+   "cat": "verschwoerung",
+   "q": "Lemuria und Mu, haben was gemeinsam ?",
+   "type": "mc",
+   "options": [
+    "Sie waren prehistorische Zivilisationen",
+    "Sie sind untergegangene Pseudokontinente",
+    "Sie sind Stämme der Ureinwohner Amerikas",
+    "sie sind Götter im Hinduismus"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q017",
+   "cat": "verschwoerung",
+   "q": "Welcher Planet sollte laut einer Pseudo-Theorie 2012 mit der Erde kollidieren ?",
+   "type": "mc",
+   "options": [
+    "Nibiru",
+    "Saturn",
+    "Uranus",
+    "Mars"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q018",
+   "cat": "kurios",
+   "q": "Walt Disney soll was mit seinem Kopf nach seinem Tod gemacht haben ?",
+   "type": "mc",
+   "options": [
+    "separat beerdigen lassen",
+    "einfrieren lassen",
+    "verbrennen lassen",
+    "sein Gehirn ausstellen lassen"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q019",
+   "cat": "kurios",
+   "q": "Die größte Versammlung der Nationalsozialisten außerhalb Deutschlands fand wo statt ?",
+   "type": "mc",
+   "options": [
+    "Madison Square Garden – USA",
+    "Juventus Stadion – ITALIEN",
+    "Parc des Princes – FRANKREICH",
+    "La Bombonera – ARGENTINIEN"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q020",
+   "cat": "kurios",
+   "q": "Nietzsches Schwester hat seine übriggebliebenen Texte, nach seinem Tod stark an die Ideologie der Nationalsozialisten angepasst ...",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q021",
+   "cat": "verschwoerung",
+   "q": "Die Nazca Linien in Peru sind laut Pseudowissenschaftler was genau ?",
+   "type": "mc",
+   "options": [
+    "Pilgerpfade",
+    "Autobahnen",
+    "Landebahnen",
+    "Rennstrecken"
+   ],
+   "correct": 2
+  },
+  {
+   "id": "q022",
+   "cat": "pseudo",
+   "q": "Der Persönlichkeitstest laut Myers-Briggs ist wissenschaftlich anerkannt ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q023",
+   "cat": "pseudo",
+   "q": "Die AA – Anonymen Alkoholiker haben keine geringere Rückfallquote, als Personen ohne Teilnahme an dem Programm ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q024",
+   "cat": "okkult",
+   "q": "Aus dem anfänglich sehr erfolgreichen Selbsthilfeprogramm Synanon entwickelte sich langsam eine brutale Gemeinschaft die man als Sekte qualifizieren kann ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q025",
+   "cat": "seuchen",
+   "q": "Schon in den 1930er und 1940er Jahren wurde der Zusammenhang zwischen Lungenkrebs und Rauchen festgestellt ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q026",
+   "cat": "okkult",
+   "q": "Die Nonne Tersa von Avila war berühmt wofür ?",
+   "type": "mc",
+   "options": [
+    "Hellsehen durch Handauflegen",
+    "Telepathische Kommunikation",
+    "Levitation , also der Fähigkeit zu Fliegen während Religiöser Erfahrungen",
+    "Kommunikation mit Tieren"
+   ],
+   "correct": 2
+  },
+  {
+   "id": "q027",
+   "cat": "pseudo",
+   "q": "Der Luffahrtpionier Alfred Lawson glaubte das welche zwei Prinzipien die gesamte Physik erklären ?",
+   "type": "mc",
+   "options": [
+    "Sog und Druck",
+    "magnetische Anziehung und Abstoßung",
+    "Lichtreflexion und Lichtabsorbtion",
+    "Kernspaltung und Kernfusion"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q028",
+   "cat": "okkult",
+   "q": "Der Prophet Cyrus Teed glaubte das wir innerhalb der Erden leben und dass außerhalb nichts weiter existiert ?",
+   "type": "jn",
+   "options": [
+    "Ja",
+    "Nein"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q029",
+   "cat": "okkult",
+   "q": "Die Gründerin des Home of Truth glaubte daran das welches Prozdere ein verstorbenes Mitglied wiederbeleben kann ?",
+   "type": "mc",
+   "options": [
+    "Bäder in Honig",
+    "Milcheinläufe",
+    "das Eingraben der Füße in einem Blumenbeet",
+    "Stromschläge"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q030",
+   "cat": "okkult",
+   "q": "Der spirituelle Führer Aleister Crowley wurde auch bezeichnet als ?",
+   "type": "mc",
+   "options": [
+    "The Great Idiot",
+    "The Great Beast",
+    "The Great Liar",
+    "The Great Master"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q031",
+   "cat": "okkult",
+   "q": "Die Beatles, The Doors und Led Zepplin besangen welchen Okkultisten ?",
+   "type": "mc",
+   "options": [
+    "Aleister Crowley",
+    "Cyrus Teed",
+    "Joseph Smith",
+    "Claude Vorilhon"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q032",
+   "cat": "pseudo",
+   "q": "Manifestieren ist die angebliche Lehre wovon ?",
+   "type": "mc",
+   "options": [
+    "Verwirklichung durch reine Vorstellungskraft",
+    "Verwandlung von Blei in Gold",
+    "Kontrolle anderer Menschen per Gedankenkraft",
+    "Manipulation der Elemente"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q033",
+   "cat": "okkult",
+   "q": "Der französische Rennfahrer und späterer Glaubensführer Claude Vorilhon glaubte das Gott was ist ?",
+   "type": "mc",
+   "options": [
+    "ein Mythos",
+    "ein Alien",
+    "ein Bewohner der Hohlen Erde",
+    "ein Dämon"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q034",
+   "cat": "seuchen",
+   "q": "Die sogenannte Lachkrankheit wird unter anderem wodurch ausgelöst ?",
+   "type": "mc",
+   "options": [
+    "Verzehr von faulendem Fisch",
+    "Kannibalismus",
+    "Quecksilbervergiftung",
+    "Bleivergiftung"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q035",
+   "cat": "seuchen",
+   "q": "Der Verzehr von mit einem bestimmten Pilz infiziertem Roggenmehl und daraus gewonnenem Gebäck führte 1951 wozu ?",
+   "type": "mc",
+   "options": [
+    "euphorischen und albtraumhaften Halluzinationen in einem ganzen Dorf",
+    "wahnhaften Lachanfällen",
+    "übelriechendem Atem bei Kindern",
+    "Gedächtnisverlust einer gesamten Familie, mit nicht wiederkehrenden Erinnerungen"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q036",
+   "cat": "seuchen",
+   "q": "Was haben die Säftelehre, Miasmentheorie und Milieutheorie gemeinsam ?",
+   "type": "mc",
+   "options": [
+    "Sie sind überholte Theorien aus dem Bereich der Physik",
+    "Sie sind veraltete Theorien zur Entstehung von Krankheiten",
+    "Sie sind wiederauflebende Traditionen aus dem Wellnessbereich",
+    "Sie sind Theorien der Chemie zur Synthese chemischer Substanzen"
+   ],
+   "correct": 1
+  },
+  {
+   "id": "q037",
+   "cat": "seuchen",
+   "q": "Welche totgeglaubte Krankheit führt zu im Durchschnitt sieben Fällen jährlich in den USA ?",
+   "type": "mc",
+   "options": [
+    "Pest",
+    "Polio",
+    "Masern",
+    "Pocken"
+   ],
+   "correct": 0
+  },
+  {
+   "id": "q038",
+   "cat": "seuchen",
+   "q": "Was wurde früher versucht zu erreichen in dem tote Rinder über Burgmauern katapultiert wurden ?",
+   "type": "mc",
+   "options": [
+    "Ekel und Übelkeit verbreiten",
+    "Einschüchterung der Belagerten",
+    "Ausbreitung von Krankheiten",
+    "Spass und Heiterkeit verbreiten – warum denn nicht ?"
+   ],
+   "correct": 2
+  },
+  {
+   "id": "q039",
+   "cat": "kurios",
+   "q": "Warum sind über schottischen und britischen Gräbern manchmal käfig-artige Konstruktionen angebracht ?",
+   "type": "mc",
+   "options": [
+    "zum Schutz vor Graräubern",
+    "um die Toten im Grab zu halten",
+    "um Aasfresser von reichen Verstorbenen vernzuhalten",
+    "um sie am Jüngsten Tag am Wiederauerstehen zu hindern"
+   ],
+   "correct": 0
+  }
+ ]
+}
