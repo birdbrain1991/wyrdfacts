@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141715">
+<title>WYRD FACTS</title>
+<script>
+/* PeerJS von mehreren Quellen versuchen. Filter blocken einzelne CDNs. */
+window.PEER_SRC = [
+  "https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js",
+  "https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"
+];
+window.peerReady = new Promise(function(resolve){
+  var i = 0;
+  (function next(){
+    if (typeof Peer !== "undefined") return resolve(true);
+    if (i >= window.PEER_SRC.length)  return resolve(false);
+    var t = document.createElement("script");
+    t.src = window.PEER_SRC[i++];
+    t.onload  = function(){ resolve(typeof Peer !== "undefined"); };
+    t.onerror = next;
+    document.head.appendChild(t);
+  })();
+});
+</script>
+<style>
+/* ============================================================
+   Studiokulisse einer Sendung, die es nie gab: warmes Dunkelgrün,
+   Bernstein für die Stimme, Magenta für den Spielleiter, Türkis
+   für die Ratenden - dieselbe Familie wie das Magor-Kartenspiel.
+   ============================================================ */
+:root{
+  --void:#141715; --panel:#1e2220; --panel2:#272c29; --line:#373d39;
+  --ink:#e2ddd0; --dim:#8a877b;
+  --amber:#e3a34d; --cone:#cf1f72; --robe:#2fa6b6;
+  --ok:#7fb069; --bad:#b5533f;
+  --pad:16px; --r:3px;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono","Roboto Mono",Menlo,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.45;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  overscroll-behavior-y:contain}
+.wrap{max-width:560px;margin:0 auto;padding:var(--pad) var(--pad) 48px}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:0 0 2px;line-height:1}
+h2{font-size:19px;font-weight:700;letter-spacing:-.01em;margin:0 0 10px}
+.sub{color:var(--dim);font-size:14px;margin:0 0 22px}
+
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:20px}
+.top .code{font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--amber)}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  border:1px solid var(--line);border-radius:var(--r);padding:3px 7px;color:var(--dim)}
+.badge.master{border-color:var(--cone);color:var(--cone)}
+.badge.player{border-color:var(--robe);color:var(--robe)}
+
+label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+input,select,textarea{width:100%;background:var(--panel);color:var(--ink);
+  border:1px solid var(--line);border-radius:var(--r);padding:13px 12px;
+  font-size:16px;font-family:var(--sans);appearance:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.field{margin-bottom:16px}
+
+button{width:100%;font-family:var(--mono);font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;font-weight:600;padding:15px 14px;border-radius:var(--r);
+  cursor:pointer;background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+button:active{transform:translateY(1px)}
+button[disabled]{opacity:.38;cursor:not-allowed}
+button.primary{background:var(--amber);color:#1a1614;border-color:var(--amber)}
+button.cone{background:var(--cone);color:#fff;border-color:var(--cone)}
+button.ghost{background:transparent}
+button.slim{padding:11px 12px;font-size:12px}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.stack>*+*{margin-top:10px}
+
+/* --- Die Frage als Studiotafel --- */
+.board{border:1px solid var(--line);border-top:3px solid var(--amber);
+  border-radius:var(--r);background:var(--panel);padding:18px 16px;margin:6px 0 18px}
+.board .cat{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--amber);margin:0 0 10px}
+.board .q{font-size:19px;line-height:1.35;font-weight:600;margin:0}
+.board.live{border-top-color:var(--robe)}
+.board .speaking{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--robe);margin:12px 0 0}
+
+/* --- Antworttasten: Buchstabe links, Text rechts --- */
+.opts{display:grid;gap:9px;margin:0 0 16px}
+.opt{display:flex;align-items:stretch;gap:0;text-align:left;padding:0;
+  text-transform:none;letter-spacing:normal;font-weight:400;font-family:var(--sans);
+  font-size:16px;min-height:56px;overflow:hidden}
+.opt .k{flex:none;width:46px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:15px;font-weight:700;
+  background:var(--panel);color:var(--dim);border-right:1px solid var(--line)}
+.opt .v{flex:1;display:flex;align-items:center;padding:11px 13px;line-height:1.3}
+.opt.sel{border-color:var(--robe);box-shadow:inset 0 0 0 1px var(--robe)}
+.opt.sel .k{background:var(--robe);color:#0d1211}
+.opt.right{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
+.opt.right .k{background:var(--ok);color:#0d1211}
+.opt.wrong{border-color:var(--bad);opacity:.65}
+.opt.wrong .k{background:var(--bad);color:#fff}
+.opt.locked{cursor:default}
+
+.list{border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.list .item{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+.list .item:last-child{border-bottom:none}
+.item .nm{font-weight:600;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--dim);flex:none;margin-right:9px}
+.dot.on{background:var(--ok)}
+.dot.wait{background:var(--amber)}
+.dot.bad{background:var(--bad)}
+.pts{font-family:var(--mono);font-size:15px;color:var(--amber);font-variant-numeric:tabular-nums}
+.gain{font-family:var(--mono);font-size:11px;color:var(--ok);margin-left:8px}
+
+.catgrid{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
+.catbtn{display:flex;align-items:center;justify-content:space-between;
+  text-align:left;text-transform:none;letter-spacing:normal;font-weight:600;
+  font-family:var(--sans);font-size:16px;padding:14px 14px}
+.catbtn .n{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.1em}
+.catbtn.done{opacity:.45}
+
+.note{font-size:13px;color:var(--dim);border-left:2px solid var(--line);
+  padding-left:11px;margin:16px 0}
+.status{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);margin:14px 0 0;text-align:center;line-height:1.7}
+.status.err{color:var(--bad)}
+.status.ok{color:var(--ok)}
+.sep{height:1px;background:var(--line);margin:24px 0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:50;
+  background:var(--panel2);border:1px solid var(--amber);color:var(--ink);
+  padding:10px 16px;border-radius:var(--r);font-size:14px;max-width:88vw;
+  text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+details{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);margin-top:14px}
+summary{padding:12px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);cursor:pointer}
+details .body{padding:0 12px 14px}
+.scr{display:none}
+.scr.on{display:block}
+.big{font-size:42px;font-family:var(--mono);letter-spacing:.2em;color:var(--amber);
+  text-align:center;margin:8px 0 4px}
+.center{text-align:center}
+.tally{display:flex;gap:4px;margin:10px 0 0}
+.tally i{height:4px;flex:1;background:var(--line);border-radius:2px;display:block}
+.tally i.done{background:var(--amber)}
+.tally i.now{background:var(--robe)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div>
+      <h1>WYRD FACTS</h1>
+      <div class="code" id="topCode">Das weirde Quiz</div>
+    </div>
+    <div class="badge" id="topRole">offline</div>
+  </div>
+
+  <!-- ============ ANMELDEN ============ -->
+  <section class="scr on" id="scrLogin">
+    <p class="eyebrow">Anmelden</p>
+    <p class="sub">Ein Gerät ist der Talkmaster. Alle anderen raten.</p>
+    <div class="field">
+      <label for="inCode">Raumcode</label>
+      <input id="inCode" maxlength="6" autocomplete="off" autocapitalize="characters"
+             spellcheck="false" placeholder="z. B. WYRD">
+    </div>
+    <div class="field">
+      <label for="inName">Dein Name</label>
+      <input id="inName" maxlength="14" autocomplete="off" placeholder="Wie du in der Tabelle stehst">
+    </div>
+    <div class="stack">
+      <button class="primary" id="btnJoin">Als Kandidat beitreten</button>
+      <button class="cone" id="btnHost">Sendung eröffnen</button>
+    </div>
+    <p class="status" id="loginStatus">&nbsp;</p>
+    <details id="diagBox">
+      <summary>Verbindung prüfen</summary>
+      <div class="body">
+        <div class="list" id="diagList"></div>
+        <button class="ghost slim" id="btnDiag" style="margin-top:10px">Prüfen</button>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ TALKMASTER: LOBBY ============ -->
+  <section class="scr" id="scrLobby">
+    <p class="eyebrow">Sendung offen</p>
+    <div class="big" id="lobbyCode">----</div>
+    <p class="sub center">Diesen Code an die anderen weitergeben.</p>
+
+    <p class="eyebrow">Im Studio</p>
+    <div class="list" id="lobbyList"></div>
+
+    <div class="sep"></div>
+    <p class="eyebrow">Kategorie für diese Runde</p>
+    <div class="catgrid" id="catGrid"></div>
+    <p class="status" id="lobbyStatus">&nbsp;</p>
+
+    <details>
+      <summary>Magor, Stimme &amp; Regeln</summary>
+      <div class="body">
+        <div class="field">
+          <label for="inMagor">Magor im Netz</label>
+          <input id="inMagor" autocomplete="off" spellcheck="false" placeholder="http://10.93.125.55">
+        </div>
+        <div class="field">
+          <label for="inEleven">ElevenLabs API-Schlüssel</label>
+          <input id="inEleven" type="password" autocomplete="off" spellcheck="false"
+                 placeholder="sk_…">
+        </div>
+        <div class="field">
+          <label for="inVoiceId">ElevenLabs-Stimme</label>
+          <select id="inVoiceId"><option value="">— Schlüssel eintragen, dann laden —</option></select>
+        </div>
+        <div class="row">
+          <div class="field" style="margin:0">
+            <label for="inStab">Stabilität</label>
+            <input id="inStab" type="number" step="0.05" min="0" max="1" value="0.4">
+          </div>
+          <div class="field" style="margin:0">
+            <label for="inStyle">Ausdruck</label>
+            <input id="inStyle" type="number" step="0.05" min="0" max="1" value="0.65">
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label for="inTermux">Ersatz: Sprachserver in Termux</label>
+          <input id="inTermux" autocomplete="off" spellcheck="false" placeholder="http://127.0.0.1:8090">
+        </div>
+        <div class="field">
+          <label for="inReadOpts">Antworten mitlesen</label>
+          <select id="inReadOpts">
+            <option value="1" selected>ja, A bis D vorlesen</option>
+            <option value="0">nein, nur die Frage</option>
+          </select>
+        </div>
+        <p class="note" id="voiceHint">Der Schlüssel bleibt auf diesem Gerät und wird nicht
+          weitergegeben. Trage ihn nie in eine Datei im Repo ein.</p>
+        <div class="stack">
+          <button class="ghost slim" id="btnLoadVoices">Stimmen laden</button>
+          <button class="ghost slim" id="btnTestVoice">Stimme testen</button>
+          <button class="ghost slim" id="btnTestMagor">Magor testen</button>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ TALKMASTER: FRAGE ============ -->
+  <section class="scr" id="scrMaster">
+    <p class="eyebrow">Runde <span id="mRound">1</span> &middot;
+       Frage <span id="mNum">1</span> von <span id="mTotal">1</span></p>
+    <div class="tally" id="mTally"></div>
+
+    <div class="board" id="mBoard">
+      <p class="cat" id="mCat">—</p>
+      <p class="q" id="mQ">—</p>
+    </div>
+    <div class="opts" id="mOpts"></div>
+
+    <div class="stack">
+      <button class="primary" id="btnRead">Frage vorlesen</button>
+      <button class="ghost slim" id="btnReRead">Nochmal vorlesen</button>
+      <button class="cone" id="btnReveal">Auflösen</button>
+      <button class="ghost slim" id="btnNext" disabled>Nächste Frage</button>
+    </div>
+    <p class="status" id="masterStatus">&nbsp;</p>
+
+    <div class="sep"></div>
+    <p class="eyebrow">Wer hat geantwortet</p>
+    <div class="list" id="masterList"></div>
+
+    <div class="stack" style="margin-top:16px">
+      <button class="ghost slim" id="btnEndRound">Runde abbrechen</button>
+    </div>
+  </section>
+
+  <!-- ============ KANDIDAT: WARTEN ============ -->
+  <section class="scr" id="scrWait">
+    <p class="eyebrow">Verbunden</p>
+    <h2>Gleich geht es los.</h2>
+    <p class="sub">Der Talkmaster sucht eine Kategorie aus.</p>
+    <p class="eyebrow">Im Studio</p>
+    <div class="list" id="waitList"></div>
+  </section>
+
+  <!-- ============ KANDIDAT: FRAGE ============ -->
+  <section class="scr" id="scrPlay">
+    <p class="eyebrow">Runde <span id="pRound">1</span> &middot;
+       Frage <span id="pNum">1</span> von <span id="pTotal">1</span></p>
+    <div class="tally" id="pTally"></div>
+
+    <div class="board" id="pBoard">
+      <p class="cat" id="pCat">—</p>
+      <p class="q" id="pQ">—</p>
+      <p class="speaking" id="pSpeak" style="display:none">Magor spricht</p>
+    </div>
+    <div class="opts" id="pOpts"></div>
+    <p class="status" id="playStatus">&nbsp;</p>
+
+    <div class="sep"></div>
+    <p class="eyebrow">Punkte</p>
+    <div class="list" id="playScores"></div>
+  </section>
+
+  <!-- ============ RUNDENENDE ============ -->
+  <section class="scr" id="scrRound">
+    <p class="eyebrow">Runde <span id="rRound">1</span> vorbei</p>
+    <h2 id="rHead">Kategorie durchgespielt.</h2>
+    <p class="eyebrow">Punkte</p>
+    <div class="list" id="roundScores"></div>
+    <div class="stack" id="roundMasterBtns" style="margin-top:18px">
+      <button class="primary" id="btnNextRound">Nächste Kategorie</button>
+      <button class="ghost slim" id="btnEndGame">Sendung beenden</button>
+    </div>
+  </section>
+
+  <!-- ============ ENDE ============ -->
+  <section class="scr" id="scrOver">
+    <p class="eyebrow">Endstand</p>
+    <h2>Und damit sind wir am Ende.</h2>
+    <div class="list" id="overScores"></div>
+    <button class="ghost" id="btnAgain" style="margin-top:20px">Seite neu laden</button>
+  </section>
+
+</div>
+
+<script>
+/* ================================================================
+   WYRD FACTS
+   Der Talkmaster ist der PeerJS-Host und hält den einzigen echten
+   Spielstand. Die richtige Antwort verlässt sein Gerät erst bei der
+   Auflösung, und niemand sieht, was die anderen getippt haben.
+   ================================================================ */
+
+const $  = id => document.getElementById(id);
+const el = (t,c,x) => { const n=document.createElement(t); if(c)n.className=c;
+                        if(x!=null)n.textContent=x; return n; };
+const LETTER = ['A','B','C','D','E','F'];
+
+/* Jingles im Magor-Sketch */
+const J_SENDUNG=0, J_KATEGORIE=1, J_FRAGE=2, J_SPANNUNG=3,
+      J_AUFLOESUNG=4, J_PUNKTE=5, J_FINALE=6, J_PANNE=7;
+
+let DB = null;                          // questions.json
+let ME = { role:null, name:'', code:'' };
+let peer=null, hostConn=null;
+const conns = {};
+
+let G = null;                           // Spielstand, nur Talkmaster
+let V = null;                           // Sicht, nur Kandidat
+
+function freshGame(code){
+  return { code, phase:'lobby', round:0,
+           cat:null, queue:[], idx:0, revealed:false, speaking:false,
+           playedCats:[], players:{} };
+}
+
+function show(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+let toastTimer=null;
+function toast(msg){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=el('div','toast',msg); document.body.appendChild(t);
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.remove(),3400);
+}
+function setStatus(id,msg,kind){
+  const n=$(id); n.textContent=msg||'\u00a0';
+  n.className='status'+(kind?' '+kind:'');
+}
+function store(k,v){ try{ localStorage.setItem('wyrd_'+k,v); }catch(e){} }
+function recall(k,d){ try{ const v=localStorage.getItem('wyrd_'+k); return v===null?d:v; }
+                      catch(e){ return d; } }
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+/* ================================================================
+   FRAGEN LADEN
+   ================================================================ */
+async function loadDB(){
+  const r=await fetch('questions.json',{cache:'no-store'});
+  if(!r.ok) throw new Error('questions.json nicht gefunden ('+r.status+')');
+  DB=await r.json();
+  if(!DB.questions || !DB.questions.length) throw new Error('questions.json ist leer');
+  return DB;
+}
+function catLabel(key){
+  const c=(DB.categories||[]).find(c=>c.key===key);
+  return c?c.label:key;
+}
+
+/* ================================================================
+   MAGOR
+   Die Jingles laufen von selbst: Rundenbeginn, jede Frage, jede
+   Auflösung. Der Talkmaster muss nichts extra drücken.
+   ================================================================ */
+/* Zwei Wege zu Magor. Steht der Termux-Server bereit, geht alles ueber
+   ihn: Der Browser darf localhost auch von einer https-Seite aus
+   ansprechen, den lokalen Netzbereich dagegen nicht. Ohne Server wird
+   direkt gerufen - das klappt nur, wenn die Seite selbst ueber http laeuft. */
+function magorCall(path,params){
+  const q=new URLSearchParams(params||{}).toString();
+  const tx=($('inTermux').value||'').trim().replace(/\/+$/,'');
+  if(tx){
+    fetch(tx+'/magor?path='+encodeURIComponent(path)+(q?'&'+q:''),
+          {cache:'no-store'}).catch(()=>{});
+    return;
+  }
+  const ip=($('inMagor').value||'').trim().replace(/\/+$/,'');
+  if(ip) fetch(ip+path+(q?'?'+q:''),{mode:'no-cors',cache:'no-store'}).catch(()=>{});
+}
+const jingle = id => magorCall('/jingle',{id});
+const sting  = t  => magorCall('/sting',{t});
+
+/* ================================================================
+   STIMME
+   Drei Wege, in dieser Reihenfolge: ElevenLabs, dann der Termux-
+   Server, dann die Stimme des Geräts. Alles läuft auf dem Gerät des
+   Talkmasters, also über den Lautsprecher im Raum.
+   ================================================================ */
+let ttsEl=null, lastSpoken='';
+
+function stopSpeech(){
+  if(ttsEl){ ttsEl.pause(); ttsEl=null; }
+  try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+}
+
+async function loadElevenVoices(){
+  const key=($('inEleven').value||'').trim();
+  const hint=$('voiceHint');
+  if(!key){ hint.textContent='Erst den Schlüssel eintragen.'; return; }
+  hint.textContent='Frage ElevenLabs nach den Stimmen…';
+  try{
+    const r=await fetch('https://api.elevenlabs.io/v1/voices',{headers:{'xi-api-key':key}});
+    if(!r.ok) throw new Error('Antwort '+r.status);
+    const j=await r.json();
+    const sel=$('inVoiceId'); sel.innerHTML='';
+    (j.voices||[]).forEach(v=>sel.appendChild(new Option(v.name, v.voice_id)));
+    const saved=recall('voiceid','');
+    if(saved && [...sel.options].some(o=>o.value===saved)) sel.value=saved;
+    hint.textContent=(j.voices||[]).length+' Stimmen geladen.';
+  }catch(e){
+    hint.textContent='ElevenLabs antwortet nicht ('+e.message+'). '
+      +'Schlüssel falsch, Guthaben leer, oder der Browser blockt die Anfrage — '
+      +'dann nimm den Termux-Sprachserver.';
+  }
+}
+
+async function elevenSpeak(text){
+  const key=($('inEleven').value||'').trim();
+  const vid=$('inVoiceId').value;
+  if(!key||!vid) return false;
+  const r=await fetch('https://api.elevenlabs.io/v1/text-to-speech/'+vid,{
+    method:'POST',
+    headers:{'xi-api-key':key,'Content-Type':'application/json','Accept':'audio/mpeg'},
+    body:JSON.stringify({
+      text,
+      model_id:'eleven_multilingual_v2',
+      voice_settings:{
+        stability:parseFloat($('inStab').value)||0.4,
+        similarity_boost:0.75,
+        style:parseFloat($('inStyle').value)||0.65,
+        use_speaker_boost:true
+      }
+    })
+  });
+  if(!r.ok) throw new Error('Antwort '+r.status);
+  const blob=await r.blob();
+  const url=URL.createObjectURL(blob);
+  await new Promise((res)=>{
+    ttsEl=new Audio(url);
+    ttsEl.onended=()=>{ URL.revokeObjectURL(url); res(); };
+    ttsEl.onerror=()=>{ URL.revokeObjectURL(url); res(); };
+    ttsEl.play().catch(()=>res());
+  });
+  return true;
+}
+
+async function termuxSpeak(text){
+  const tx=($('inTermux').value||'').trim().replace(/\/+$/,'');
+  if(!tx) return false;
+  const r=await fetch(tx+'/say?'+new URLSearchParams({t:text,mood:'joy',lvl:'2'}),
+                      {cache:'no-store'});
+  const j=await r.json();
+  if(!j.ok) throw new Error(j.err||'Fehler');
+  await new Promise(res=>setTimeout(res, j.ms||1500));
+  return true;
+}
+
+function deviceSpeak(text){
+  return new Promise(res=>{
+    if(!window.speechSynthesis) return res(false);
+    const vs=speechSynthesis.getVoices()||[];
+    if(!vs.length) return res(false);
+    const u=new SpeechSynthesisUtterance(text);
+    const de=vs.find(v=>/^de/i.test(v.lang));
+    if(de){ u.voice=de; u.lang=de.lang; } else u.lang='de-DE';
+    u.rate=1.0; u.pitch=1.0;
+    u.onend=()=>res(true); u.onerror=()=>res(true);
+    speechSynthesis.speak(u);
+  });
+}
+
+/* Liest vor und hält solange den Sprechzustand für alle Geräte. */
+async function announce(raw){
+  if(!raw) return;
+  const text = spellNumbers(raw);
+  lastSpoken = raw;
+  stopSpeech();
+  if(G){ G.speaking=true; pushAll(); }
+  try{
+    if(await elevenSpeak(text)) return;
+  }catch(e){ toast('ElevenLabs: '+e.message); }
+  try{
+    if(await termuxSpeak(text)) return;
+  }catch(e){}
+  const ok=await deviceSpeak(text);
+  if(!ok) toast('Kein Weg zum Vorlesen gefunden. Trage einen Schlüssel oder Server ein.');
+}
+function announceDone(){ if(G){ G.speaking=false; pushAll(); } }
+
+function questionSpeech(q){
+  let t=q.q;
+  if($('inReadOpts').value==='1' && q.type==='mc'){
+    t += ' ' + q.options.map((o,i)=>LETTER[i]+': '+o+'.').join(' ');
+  }
+  return t;
+}
+
+/* ================================================================
+   ZAHLEN AUSSCHREIBEN
+
+   Vorlesestimmen sprechen Ziffern oft als Aufzaehlung oder in der
+   falschen Sprache. Deshalb werden sie hier vorher zu Woertern:
+
+     13      -> dreizehn
+     17.     -> siebzehnten        (Punkt danach = Ordnungszahl)
+     2012    -> zweitausendzwoelf
+     1886    -> achtzehnhundertsechsundachtzig
+     1930er  -> neunzehnhundertdreissiger
+     1,5     -> eins Komma fuenf
+
+   Jahreszahlen zwischen 1100 und 1999 werden in Hundertern gesagt,
+   so wie man es im Deutschen tut - nicht als "eintausendachthundert".
+   ================================================================ */
+const ZAHL_1 = ['null','eins','zwei','drei','vier','fünf','sechs','sieben','acht','neun',
+  'zehn','elf','zwölf','dreizehn','vierzehn','fünfzehn','sechzehn','siebzehn',
+  'achtzehn','neunzehn'];
+const ZAHL_10 = ['','','zwanzig','dreißig','vierzig','fünfzig','sechzig','siebzig',
+  'achtzig','neunzig'];
+const ORD_SPEZIAL = {1:'ersten',3:'dritten',7:'siebten',8:'achten'};
+
+function unter100(n){
+  if(n<20) return ZAHL_1[n];
+  const e=n%10, z=Math.floor(n/10);
+  return (e ? (e===1?'ein':ZAHL_1[e])+'und' : '') + ZAHL_10[z];
+}
+function unter1000(n){
+  const h=Math.floor(n/100), r=n%100;
+  return (h ? (h===1?'ein':ZAHL_1[h])+'hundert' : '') + (r?unter100(r):'');
+}
+function zahlWort(n){
+  if(n===0) return 'null';
+  if(n<1000) return unter1000(n);
+  if(n<1000000){
+    const t=Math.floor(n/1000), r=n%1000;
+    return (t===1?'ein':unter1000(t))+'tausend' + (r?unter1000(r):'');
+  }
+  const m=Math.floor(n/1000000), r=n%1000000;
+  return (m===1?'eine Million ':unter1000(m)+' Millionen ')
+       + (r?zahlWort(r):'');
+}
+function jahrWort(n){
+  const r=n%100;
+  if(n>=1100 && n<=1999)
+    return unter100(Math.floor(n/100))+'hundert'+(r?unter100(r):'');
+  return zahlWort(n);
+}
+function ordnungsWort(n){
+  if(ORD_SPEZIAL[n]) return ORD_SPEZIAL[n];
+  return zahlWort(n) + (n<20 ? 'ten' : 'sten');
+}
+
+function spellNumbers(text){
+  if(!text) return text;
+  return String(text)
+    // Dezimalzahlen zuerst, sonst zerfallen sie in zwei Zahlen
+    .replace(/(\d+),(\d+)/g,(m,a,b)=>
+      zahlWort(+a)+' Komma '+b.split('').map(d=>ZAHL_1[+d]).join(' '))
+    // Jahrzehnte: 1930er, 80er
+    .replace(/(\d{2,4})er\b/g,(m,a)=>{
+      const n=+a;
+      return (n>=1100 ? jahrWort(n) : unter100(n))+'er';
+    })
+    // Ordnungszahlen: Punkt danach, dann ein Wort
+    .replace(/(\d+)\.(?=\s+\p{L})/gu,(m,a)=>ordnungsWort(+a))
+    // alles Uebrige
+    .replace(/\d+/g,(m)=>{
+      const n=+m;
+      if(!isFinite(n)) return m;
+      if(m.length===4 && n>=1100 && n<=2099) return jahrWort(n);
+      if(n>999999999) return m;
+      return zahlWort(n);
+    });
+}
+
+/* ================================================================
+   NETZ
+   ================================================================ */
+const roomId = code => 'wyrdfacts-v1-'+code;
+
+async function libReady(statusId){
+  if(typeof Peer!=='undefined') return true;
+  setStatus(statusId,'Lade die Verbindungsbibliothek…');
+  const ok=await window.peerReady;
+  if(!ok){
+    setStatus(statusId,'PeerJS ließ sich nicht laden — vermutlich blockt ein Filter '
+      +'die CDNs. Unter „Verbindung prüfen“ steht, welche.','err');
+    $('diagBox').open=true; runDiag();
+    return false;
+  }
+  return true;
+}
+
+async function hostRoom(code,name){
+  if(!await libReady('loginStatus')) return;
+  setStatus('loginStatus','Lade die Fragen…');
+  try{ await loadDB(); }
+  catch(e){ setStatus('loginStatus',e.message,'err'); return; }
+
+  ME={role:'master',name,code};
+  G=freshGame(code);
+  setStatus('loginStatus','Sendung wird eröffnet…');
+
+  try{ peer=new Peer(roomId(code),{debug:1}); }
+  catch(e){ setStatus('loginStatus','PeerJS lässt sich nicht starten: '+e.message,'err'); return; }
+
+  const slow=setTimeout(()=>{
+    if(!peer||!peer.open)
+      setStatus('loginStatus','Der Signalisierungsserver antwortet nicht. '
+        +'Braucht Internet, auch auf dem Hotspot.','err');
+  },12000);
+
+  peer.on('open',()=>{
+    clearTimeout(slow);
+    $('topCode').textContent='Raum '+code;
+    $('topRole').textContent='Talkmaster';
+    $('topRole').className='badge master';
+    $('lobbyCode').textContent=code;
+    buildCatGrid(); renderLobby();
+    show('scrLobby'); keepAwake();
+    jingle(J_SENDUNG);
+  });
+
+  peer.on('connection',conn=>{
+    conn.on('open',()=>{ conns[conn.peer]=conn; });
+    conn.on('data',d=>onHostData(conn,d));
+    conn.on('close',()=>{
+      delete conns[conn.peer];
+      if(G.players[conn.peer]){ G.players[conn.peer].online=false; pushAll(); }
+    });
+    conn.on('error',()=>{});
+  });
+
+  peer.on('error',e=>{
+    clearTimeout(slow);
+    if(e.type==='unavailable-id')
+      setStatus('loginStatus','Der Code ist noch vom letzten Versuch belegt. '
+        +'Warte eine Minute, oder nimm einen anderen.','err');
+    else if(e.type==='network'||e.type==='server-error'||e.type==='socket-error')
+      setStatus('loginStatus','Kein Kontakt zum Signalisierungsserver ('+e.type+').','err');
+    else if(e.type==='browser-incompatible')
+      setStatus('loginStatus','Dieser Browser kann kein WebRTC.','err');
+    else setStatus('loginStatus','Verbindungsfehler: '+e.type,'err');
+  });
+}
+
+async function joinRoom(code,name){
+  if(!await libReady('loginStatus')) return;
+  ME={role:'player',name,code};
+  setStatus('loginStatus','Suche die Sendung…');
+
+  try{ peer=new Peer({debug:1}); }
+  catch(e){ setStatus('loginStatus','PeerJS lässt sich nicht starten: '+e.message,'err'); return; }
+
+  const slow=setTimeout(()=>{
+    if(!hostConn||!hostConn.open)
+      setStatus('loginStatus','Keine Antwort. Läuft die Sendung und stimmt der Code?','err');
+  },12000);
+
+  peer.on('open',()=>{
+    hostConn=peer.connect(roomId(code),{reliable:true});
+    hostConn.on('open',()=>{
+      clearTimeout(slow);
+      hostConn.send({t:'join',name});
+      $('topCode').textContent='Raum '+code;
+      $('topRole').textContent='Kandidat';
+      $('topRole').className='badge player';
+      show('scrWait'); keepAwake();
+    });
+    hostConn.on('data',d=>onPlayerData(d));
+    hostConn.on('close',()=>toast('Verbindung zum Talkmaster verloren.'));
+    hostConn.on('error',()=>{});
+  });
+
+  peer.on('error',e=>{
+    clearTimeout(slow);
+    if(e.type==='peer-unavailable')
+      setStatus('loginStatus','Unter diesem Code läuft keine Sendung.','err');
+    else if(e.type==='network'||e.type==='server-error'||e.type==='socket-error')
+      setStatus('loginStatus','Kein Kontakt zum Signalisierungsserver ('+e.type+').','err');
+    else setStatus('loginStatus','Verbindungsfehler: '+e.type,'err');
+  });
+}
+
+function send(pid,msg){ const c=conns[pid]; if(c&&c.open) c.send(msg); }
+function pushAll(){
+  if(!G) return;
+  for(const pid in conns) send(pid,{t:'state',s:viewFor(pid)});
+  renderMasterAll();
+}
+
+function onHostData(conn,d){
+  const pid=conn.peer;
+  if(d.t==='join'){
+    if(!G.players[pid])
+      G.players[pid]={name:(d.name||'Kandidat').slice(0,14),score:0,
+                      answer:null,at:0,gain:0,online:true};
+    else G.players[pid].online=true;
+    pushAll();
+  }
+  else if(d.t==='answer'){
+    const p=G.players[pid];
+    if(!p||G.phase!=='round'||G.revealed) return;
+    if(p.answer!==null) return;                     // eine Antwort, keine Korrektur
+    const q=G.queue[G.idx];
+    if(!q || d.i<0 || d.i>=q.options.length) return;
+    p.answer=d.i; p.at=Date.now();
+    pushAll();
+  }
+}
+
+function viewFor(pid){
+  const p=G.players[pid]||{};
+  const q=G.queue[G.idx];
+  return {
+    phase:G.phase, round:G.round,
+    cat:G.cat?catLabel(G.cat):'', num:G.idx+1, total:G.queue.length,
+    q: q?{q:q.q, type:q.type, options:q.options}:null,
+    revealed:G.revealed,
+    correct: G.revealed && q ? q.correct : null,
+    speaking:G.speaking,
+    me:{answer:(p.answer===undefined?null:p.answer), gain:p.gain||0},
+    answered:Object.values(G.players).filter(x=>x.answer!==null).length,
+    totalPlayers:Object.values(G.players).length,
+    lobby:Object.values(G.players).map(x=>({name:x.name,online:x.online})),
+    scores:scoreTable()
+  };
+}
+function scoreTable(){
+  return Object.values(G.players)
+    .map(p=>({name:p.name,score:p.score,gain:p.gain||0}))
+    .sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name));
+}
+
+function onPlayerData(d){
+  if(d.t!=='state') return;
+  V=d.s;
+  if(V.phase==='lobby')      { renderWait();  show('scrWait');  }
+  else if(V.phase==='round') { renderPlay();  show('scrPlay');  }
+  else if(V.phase==='between'){ renderRound(V); show('scrRound'); }
+  else if(V.phase==='over')  { renderList('overScores',V.scores,true); show('scrOver'); }
+}
+
+/* ================================================================
+   ANZEIGE
+   ================================================================ */
+function renderList(nodeId,rows,withScore){
+  const box=$(nodeId); box.innerHTML='';
+  if(!rows||!rows.length){
+    const e=el('div','item'); e.appendChild(el('span','meta','noch niemand'));
+    box.appendChild(e); return;
+  }
+  rows.forEach(r=>{
+    const it=el('div','item');
+    const left=el('div'); left.style.display='flex'; left.style.alignItems='center';
+    left.appendChild(el('span','dot'+(r.dot||'')));
+    left.appendChild(el('span','nm',r.name));
+    it.appendChild(left);
+    if(withScore){
+      const right=el('div'); right.style.display='flex'; right.style.alignItems='baseline';
+      right.appendChild(el('span','pts',String(r.score)));
+      if(r.gain) right.appendChild(el('span','gain','+'+r.gain));
+      it.appendChild(right);
+    } else it.appendChild(el('span','meta',r.meta||''));
+    box.appendChild(it);
+  });
+}
+function renderTally(nodeId,total,now){
+  const box=$(nodeId); box.innerHTML='';
+  for(let i=0;i<total;i++){
+    const b=el('i'); if(i<now) b.className='done'; else if(i===now) b.className='now';
+    box.appendChild(b);
+  }
+}
+function optionNode(letter,text,cls){
+  const b=el('button','opt'+(cls?' '+cls:''));
+  b.type='button';
+  b.appendChild(el('span','k',letter));
+  b.appendChild(el('span','v',text));
+  return b;
+}
+
+/* ---------- Talkmaster ---------- */
+function buildCatGrid(){
+  const box=$('catGrid'); box.innerHTML='';
+  (DB.categories||[]).forEach(c=>{
+    const done=G.playedCats.includes(c.key);
+    const b=el('button','catbtn'+(done?' done':''));
+    b.type='button';
+    b.appendChild(el('span','l',c.label));
+    b.appendChild(el('span','n',c.count+' Fragen'+(done?' · gespielt':'')));
+    b.onclick=()=>startRound(c.key);
+    box.appendChild(b);
+  });
+}
+function renderLobby(){
+  renderList('lobbyList',Object.values(G.players)
+    .map(p=>({name:p.name,dot:p.online?' on':'',meta:p.online?'bereit':'weg'})));
+}
+function renderMasterAll(){
+  if(!G) return;
+  if(G.phase==='lobby'){ renderLobby(); return; }
+  if(G.phase!=='round') return;
+
+  const q=G.queue[G.idx];
+  $('mRound').textContent=G.round;
+  $('mNum').textContent=G.idx+1;
+  $('mTotal').textContent=G.queue.length;
+  renderTally('mTally',G.queue.length,G.idx);
+  $('mCat').textContent=catLabel(G.cat);
+  $('mQ').textContent=q?q.q:'—';
+  $('mBoard').classList.toggle('live',!!G.speaking);
+
+  const box=$('mOpts'); box.innerHTML='';
+  if(q) q.options.forEach((o,i)=>{
+    box.appendChild(optionNode(LETTER[i],o,i===q.correct?'right locked':'locked'));
+  });
+
+  renderList('masterList',Object.values(G.players).map(p=>{
+    let dot='', meta='überlegt noch';
+    if(p.answer!==null){
+      if(G.revealed){
+        const ok=q && p.answer===q.correct;
+        dot=ok?' on':' bad';
+        meta=(ok?'richtig':'falsch')+' · '+LETTER[p.answer]+(p.gain?' · +'+p.gain:'');
+      } else { dot=' wait'; meta='hat getippt'; }
+    }
+    return {name:p.name,dot,meta};
+  }));
+}
+
+/* ---------- Kandidat ---------- */
+function renderWait(){
+  renderList('waitList',(V.lobby||[]).map(p=>({name:p.name,dot:p.online?' on':'',meta:''})));
+}
+function renderPlay(){
+  $('pRound').textContent=V.round;
+  $('pNum').textContent=V.num;
+  $('pTotal').textContent=V.total;
+  renderTally('pTally',V.total,V.num-1);
+  $('pCat').textContent=V.cat;
+  $('pQ').textContent=V.q?V.q.q:'—';
+  $('pBoard').classList.toggle('live',!!V.speaking);
+  $('pSpeak').style.display=V.speaking?'block':'none';
+
+  const box=$('pOpts'); box.innerHTML='';
+  if(V.q) V.q.options.forEach((o,i)=>{
+    let cls='';
+    if(V.revealed){
+      if(i===V.correct) cls='right locked';
+      else if(V.me.answer===i) cls='wrong locked';
+      else cls='locked';
+    } else if(V.me.answer===i) cls='sel locked';
+    else if(V.me.answer!==null) cls='locked';
+    const n=optionNode(LETTER[i],o,cls);
+    if(V.me.answer===null && !V.revealed)
+      n.onclick=()=>{ if(hostConn&&hostConn.open) hostConn.send({t:'answer',i}); };
+    box.appendChild(n);
+  });
+
+  if(V.revealed){
+    const ok=V.me.answer===V.correct;
+    setStatus('playStatus',
+      V.me.answer===null ? 'Keine Antwort abgegeben.'
+        : ok ? ('Richtig'+(V.me.gain?' · '+V.me.gain+' Punkte':'')) : 'Leider falsch.',
+      V.me.answer===null?null:(ok?'ok':'err'));
+  } else {
+    setStatus('playStatus', V.me.answer!==null
+      ? 'Antwort steht. '+V.answered+' von '+V.totalPlayers+' haben getippt.'
+      : V.answered+' von '+V.totalPlayers+' haben getippt.');
+  }
+  renderList('playScores',V.scores,true);
+}
+function renderRound(v){
+  $('rRound').textContent=v.round;
+  renderList('roundScores',v.scores,true);
+  $('roundMasterBtns').style.display = ME.role==='master' ? 'block':'none';
+  $('rHead').textContent = ME.role==='master'
+    ? 'Kategorie durch. Weiter mit der nächsten?' : 'Kategorie durchgespielt.';
+}
+
+/* ================================================================
+   ABLAUF
+   ================================================================ */
+function startRound(catKey){
+  const pool=DB.questions.filter(q=>q.cat===catKey);
+  if(!pool.length){ setStatus('lobbyStatus','In dieser Kategorie liegen keine Fragen.','err'); return; }
+  G.cat=catKey;
+  G.queue=shuffle(pool.slice());
+  G.idx=0; G.revealed=false; G.round++;
+  G.phase='round';
+  if(!G.playedCats.includes(catKey)) G.playedCats.push(catKey);
+  for(const pid in G.players){
+    const p=G.players[pid]; p.answer=null; p.at=0; p.gain=0;
+  }
+  $('btnNext').disabled=true;
+  $('btnReveal').disabled=false;
+  show('scrMaster');
+  pushAll();
+
+  /* Jingle zum Rundenbeginn, dann die Ansage, dann die erste Frage. */
+  jingle(J_KATEGORIE);
+  setTimeout(async ()=>{
+    await announce('Neue Kategorie: '+catLabel(catKey)+'.');
+    announceDone();
+    setTimeout(()=>askCurrent(), 400);
+  }, 2400);
+}
+
+async function askCurrent(){
+  const q=G.queue[G.idx];
+  if(!q) return;
+  jingle(J_FRAGE);
+  setStatus('masterStatus','Wird vorgelesen…');
+  setTimeout(async ()=>{
+    await announce(questionSpeech(q));
+    announceDone();
+    setStatus('masterStatus','Frage steht. Auflösen, wenn alle getippt haben.');
+    jingle(J_SPANNUNG);
+  }, 700);
+}
+
+function reveal(){
+  if(G.revealed) return;
+  const q=G.queue[G.idx];
+  G.revealed=true;
+
+  const right=Object.entries(G.players)
+    .filter(([,p])=>p.answer===q.correct)
+    .sort((a,b)=>a[1].at-b[1].at);
+
+  const bonus=[5,3,1];
+  right.forEach(([,p],rank)=>{
+    p.gain = 10 + (bonus[rank]||0);
+    p.score += p.gain;
+  });
+  Object.values(G.players).forEach(p=>{ if(p.answer!==q.correct) p.gain=0; });
+
+  jingle(J_AUFLOESUNG);
+  setTimeout(()=>{ sting(right.length?'right':'wrong'); }, 1500);
+  if(right.length) setTimeout(()=>jingle(J_PUNKTE), 2100);
+
+  $('btnNext').disabled=false;
+  $('btnReveal').disabled=true;
+  setStatus('masterStatus', right.length
+    ? (right.length+' richtig. '+right.map(([,p])=>p.name).join(', '))
+    : 'Niemand hatte recht.', right.length?'ok':null);
+  pushAll();
+
+  setTimeout(async ()=>{
+    await announce('Richtig war '+LETTER[q.correct]+': '+q.options[q.correct]+'.');
+    announceDone();
+  }, 2600);
+}
+
+function nextQuestion(){
+  stopSpeech();
+  if(G.idx+1>=G.queue.length){ endRound(); return; }
+  G.idx++; G.revealed=false;
+  for(const pid in G.players){ const p=G.players[pid]; p.answer=null; p.at=0; p.gain=0; }
+  $('btnNext').disabled=true;
+  $('btnReveal').disabled=false;
+  pushAll();
+  askCurrent();
+}
+
+function endRound(){
+  stopSpeech();
+  G.phase='between';
+  renderRound(viewFor('__master__'));
+  show('scrRound');
+  pushAll();
+  jingle(J_PUNKTE);
+}
+function nextRound(){
+  G.phase='lobby'; G.cat=null; G.queue=[]; G.idx=0; G.revealed=false;
+  buildCatGrid(); renderLobby(); show('scrLobby');
+  setStatus('lobbyStatus','Wähle die nächste Kategorie.');
+  pushAll();
+}
+function endGame(){
+  stopSpeech();
+  G.phase='over';
+  renderList('overScores',scoreTable(),true);
+  show('scrOver');
+  pushAll();
+  jingle(J_FINALE);
+  const top=scoreTable()[0];
+  if(top) setTimeout(async ()=>{ await announce('Gewonnen hat '+top.name
+    +' mit '+top.score+' Punkten. Gute Nacht.'); announceDone(); }, 3200);
+}
+
+/* ================================================================
+   BEDIENUNG
+   ================================================================ */
+$('inCode').value    = recall('code','');
+$('inName').value    = recall('name','');
+$('inMagor').value   = recall('magor','http://10.93.125.55');
+$('inEleven').value  = recall('eleven','');
+$('inTermux').value  = recall('termux','');
+$('inStab').value    = recall('stab','0.4');
+$('inStyle').value   = recall('style','0.65');
+$('inReadOpts').value= recall('readopts','1');
+
+function readLogin(){
+  const code=$('inCode').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  const name=$('inName').value.trim();
+  if(code.length<3){ setStatus('loginStatus','Der Raumcode braucht mindestens 3 Zeichen.','err'); return null; }
+  if(!name){ setStatus('loginStatus','Ohne Namen geht es nicht — die Punkte brauchen einen Besitzer.','err'); return null; }
+  store('code',code); store('name',name);
+  return {code,name};
+}
+$('btnHost').onclick=()=>{ const v=readLogin(); if(v) hostRoom(v.code,v.name); };
+$('btnJoin').onclick=()=>{ const v=readLogin(); if(v) joinRoom(v.code,v.name); };
+
+$('btnRead').onclick=async ()=>{
+  const q=G&&G.queue[G.idx]; if(!q) return;
+  await announce(questionSpeech(q)); announceDone();
+};
+$('btnReRead').onclick=async ()=>{
+  if(!lastSpoken) return;
+  await announce(lastSpoken); announceDone();
+};
+$('btnReveal').onclick=reveal;
+$('btnNext').onclick=nextQuestion;
+$('btnEndRound').onclick=endRound;
+$('btnNextRound').onclick=nextRound;
+$('btnEndGame').onclick=endGame;
+$('btnAgain').onclick=()=>location.reload();
+
+$('btnLoadVoices').onclick=()=>{ store('eleven',$('inEleven').value.trim()); loadElevenVoices(); };
+$('btnTestVoice').onclick=async ()=>{
+  store('eleven',$('inEleven').value.trim());
+  store('voiceid',$('inVoiceId').value);
+  store('stab',$('inStab').value); store('style',$('inStyle').value);
+  jingle(J_SENDUNG);
+  setTimeout(async ()=>{
+    await announce('Willkommen bei Wyrd Facts, dem weirden Quiz.');
+  },2400);
+};
+$('btnTestMagor').onclick=async ()=>{
+  const ip=($('inMagor').value||'').trim().replace(/\/+$/,'');
+  const hint=$('voiceHint');
+  if(!ip){ hint.textContent='Trage zuerst Magors Adresse ein.'; return; }
+  if(location.protocol==='https:' && !($('inTermux').value||'').trim()){
+    hint.textContent='Diese Seite läuft über https und darf lokale Adressen nicht aufrufen. '
+      +'Trag den Termux-Sprachserver ein — über ihn geht es trotzdem.';
+    return;
+  }
+  hint.textContent='Frage Magor…';
+  const tx=($('inTermux').value||'').trim().replace(/\/+$/,'');
+  try{
+    const url = tx ? (tx+'/magor?path=/status') : (ip+'/status');
+    const r=await fetch(url,{cache:'no-store'});
+    const j=await r.json();
+    if(j.ok===false) throw new Error(j.err||'keine Antwort');
+    hint.textContent='Magor antwortet. Akku '+j.batt+' %, Netz '+j.ssid
+      +(tx?' — über Termux.':' — direkt.');
+    jingle(J_SENDUNG);
+  }catch(e){
+    hint.textContent='Keine Antwort ('+e.message+'). Stimmt die IP auf seinem Display, '
+      +'und läuft der Termux-Server?';
+  }
+};
+$('inMagor').onchange   =()=>store('magor',  $('inMagor').value.trim());
+$('inEleven').onchange  =()=>store('eleven', $('inEleven').value.trim());
+$('inVoiceId').onchange =()=>store('voiceid',$('inVoiceId').value);
+$('inTermux').onchange  =()=>store('termux', $('inTermux').value.trim());
+$('inStab').onchange    =()=>store('stab',   $('inStab').value);
+$('inStyle').onchange   =()=>store('style',  $('inStyle').value);
+$('inReadOpts').onchange=()=>store('readopts',$('inReadOpts').value);
+
+/* ================================================================
+   DIAGNOSE
+   ================================================================ */
+async function runDiag(){
+  const box=$('diagList'); box.innerHTML='';
+  const line=(name,txt,good)=>{
+    const it=el('div','item');
+    const l=el('div'); l.style.display='flex'; l.style.alignItems='center';
+    const dot=el('span','dot'+(good===true?' on':good===false?'':' wait'));
+    l.appendChild(dot); l.appendChild(el('span','nm',name));
+    const meta=el('span','meta',txt);
+    it.appendChild(l); it.appendChild(meta);
+    box.appendChild(it);
+    return {dot,meta};
+  };
+  line('WebRTC', window.RTCPeerConnection?'vorhanden':'fehlt', !!window.RTCPeerConnection);
+
+  const qr=line('questions.json','…',null);
+  try{ await loadDB(); qr.meta.textContent=DB.questions.length+' Fragen'; qr.dot.className='dot on'; }
+  catch(e){ qr.meta.textContent='fehlt'; qr.dot.className='dot'; }
+
+  for(const src of window.PEER_SRC){
+    const host=src.split('/')[2];
+    const row=line(host,'…',null);
+    try{
+      await new Promise((res,rej)=>{
+        const t=document.createElement('script');
+        t.src=src; t.onload=res; t.onerror=rej;
+        document.head.appendChild(t);
+        setTimeout(rej,6000);
+      });
+      row.meta.textContent='erreichbar'; row.dot.className='dot on';
+    }catch(e){ row.meta.textContent='blockiert'; row.dot.className='dot'; }
+  }
+
+  const has=typeof Peer!=='undefined';
+  line('Bibliothek', has?'geladen':'nicht geladen', has);
+  if(!has){ line('Hinweis','CDN im Filter freigeben',false); return; }
+
+  const row=line('Signalisierung','…',null);
+  await new Promise(res=>{
+    let t;
+    const done=(txt,good)=>{ row.meta.textContent=txt;
+      row.dot.className='dot'+(good?' on':''); try{t.destroy();}catch(e){} res(); };
+    try{ t=new Peer({debug:0}); }catch(e){ return done('Fehler',false); }
+    t.on('open',()=>done('erreichbar',true));
+    t.on('error',e=>done(e.type,false));
+    setTimeout(()=>done('keine Antwort',false),10000);
+  });
+}
+$('btnDiag').onclick=runDiag;
+
+async function keepAwake(){
+  try{
+    if('wakeLock' in navigator){
+      let w=await navigator.wakeLock.request('screen');
+      document.addEventListener('visibilitychange',async()=>{
+        if(document.visibilityState==='visible'){
+          try{ w=await navigator.wakeLock.request('screen'); }catch(e){}
+        }
+      });
+    }
+  }catch(e){}
+}
+
+/* Stimmen des Geräts vorwärmen, falls ElevenLabs ausfällt */
+if(window.speechSynthesis){
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+}
+</script>
+</body>
+</html>
