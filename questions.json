@@ -67,7 +67,7 @@
   {
    "id": "q003",
    "cat": "aberglaube",
-   "q": "Im japanischen Aberglauben klingen die Worte für die Zahl Vier und das Wort für Tod sehr ähnlich ?",
+   "q": "Im Japanischen klingen die Worte für die Zahl Vier und das Wort für Tod sehr ähnlich ?",
    "type": "jn",
    "options": [
     "Ja",
@@ -128,7 +128,7 @@
   {
    "id": "q008",
    "cat": "ufo",
-   "q": "Die Massenpanik die auf die Austrahlung von Krieg der Welten von Orson Wells ausbrach gilt wenn man Originalquellen im Nachhinein betrachtet als in der Popkultur übertrieben beschrieben ?",
+   "q": "Die Massenpanik die auf die Ausstrahlung von Krieg der Welten von Orson Wells ausbrach gilt wenn man Originalquellen im Nachhinein betrachtet als in der Popkultur übertrieben beschrieben ?",
    "type": "jn",
    "options": [
     "Ja",
@@ -344,7 +344,7 @@
   {
    "id": "q026",
    "cat": "okkult",
-   "q": "Die Nonne Tersa von Avila war berühmt wofür ?",
+   "q": "Die Nonne Teresa von Avila war berühmt wofür ?",
    "type": "mc",
    "options": [
     "Hellsehen durch Handauflegen",
@@ -357,7 +357,7 @@
   {
    "id": "q027",
    "cat": "pseudo",
-   "q": "Der Luffahrtpionier Alfred Lawson glaubte das welche zwei Prinzipien die gesamte Physik erklären ?",
+   "q": "Der Luftfahrtpionier Alfred Lawson glaubte das welche zwei Prinzipien die gesamte Physik erklären ?",
    "type": "mc",
    "options": [
     "Sog und Druck",
@@ -370,7 +370,7 @@
   {
    "id": "q028",
    "cat": "okkult",
-   "q": "Der Prophet Cyrus Teed glaubte das wir innerhalb der Erden leben und dass außerhalb nichts weiter existiert ?",
+   "q": "Der Prophet Cyrus Teed glaubte das wir innerhalb der Erde leben und dass außerhalb nichts weiter existiert ?",
    "type": "jn",
    "options": [
     "Ja",
@@ -381,7 +381,7 @@
   {
    "id": "q029",
    "cat": "okkult",
-   "q": "Die Gründerin des Home of Truth glaubte daran das welches Prozdere ein verstorbenes Mitglied wiederbeleben kann ?",
+   "q": "Die Gründerin des Home of Truth glaubte daran das welches Prozedere ein verstorbenes Mitglied wiederbeleben kann ?",
    "type": "mc",
    "options": [
     "Bäder in Honig",
