@@ -250,7 +250,7 @@
   {
    "id": "q018",
    "cat": "kurios",
-   "q": "Walt Disney soll was mit seinem Kopf nach seinem Tod gemacht haben ?",
+   "q": "Walt Disney soll angeblich was mit seinem Kopf nach seinem Tod gemacht haben ?",
    "type": "mc",
    "options": [
     "separat beerdigen lassen",
@@ -514,10 +514,10 @@
    "q": "Warum sind über schottischen und britischen Gräbern manchmal käfig-artige Konstruktionen angebracht ?",
    "type": "mc",
    "options": [
-    "zum Schutz vor Graräubern",
+    "zum Schutz vor Grabräubern",
     "um die Toten im Grab zu halten",
     "um Aasfresser von reichen Verstorbenen vernzuhalten",
-    "um sie am Jüngsten Tag am Wiederauerstehen zu hindern"
+    "um sie am Jüngsten Tag am Wiederauferstehen zu hindern"
    ],
    "correct": 0
   }
